@@ -4,17 +4,23 @@ import "dotenv/config"
 import connectDB from './configs/mongodb.js'
 import { clerkWebHooks } from "./controllers/webhooks.js"
 
+
+// Initialize Express
 const app = express()
 
-// Connect to database
+//connect to database
 await connectDB()
 
-// Middleware
+//MidlleWare 
 app.use(cors())
 
-
-// Routes
+//Routes
 app.get("/", (req, res)=> res.send("API Working"))
-app.post("/clerk", clerkWebHooks)
+app.post("/clerk", express.json(), clerkWebHooks)
 
-export default app
+//Port
+const PORT = process.env.PORT || 5000
+
+app.listen(PORT, ()=>{
+    console.log(`Surver is running on port ${PORT}`)
+})
