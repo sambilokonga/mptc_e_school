@@ -26,9 +26,9 @@ export const clerkWebHooks = async(req, res)=>{
                 res.json({})
                 break;
             }
-            case "user.update": {
+            case "user.updated": {
                 const userData = {
-                    email: data.email_address[0].email_addresses,
+                    email: data.email_address[0].email_address,
                     name: data.first_name + " " + data.last_name,
                     image_Url: data.image_url,
                 }
