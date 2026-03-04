@@ -2,6 +2,7 @@ import User from "../models/User.js"
 import { Purchase } from "../models/Purchase.js";
 import Stripe from "stripe";
 import Course from "../models/Course.js";
+import CourseProgress from "../models/CourseProgress.js";
 
 //get user data
 export const getUserData = async (req, res)=>{
@@ -77,5 +78,79 @@ export const purchaseCourse = async (req, res)=>{
 
     }catch (error) {
         res.json({success: false, message: error.message})
+    }
+}
+
+//update user course progress
+export const updateCourseProgress = async (req, res)=>{
+
+    try {
+       const userId = req.auth.userId
+        const {courseId, lectureId} = req.body
+        const progressData = await CourseProgress.findOne({userId, courseId})
+        if(progressData) {
+            if(progressData.lectureCompleted.includes(lectureId)){
+                return res.json({success: true, message: "Lecture already marked as completed"})
+            }
+            progressData.lectureCompleted.push(lectureId)
+            await progressData.save()
+            return res.json({success: true, message: "Lecture marked as completed"})
+        } else {
+            const newProgress = await CourseProgress.create({
+                userId,
+                courseId,
+                lectureCompleted: [lectureId]
+            })
+            return res.json({success: true, message: "Lecture marked as completed", newProgress})
+        }
+    } catch (error) {
+        res.json({success: false, message: error.message})
+    }
+}
+
+//get user course progress
+export const getUserCourseProgress = async (req, res)=>{
+    try {
+        const userId = req.auth.userId
+        const {courseId} = req.body
+        const progressData = await CourseProgress.findOne({userId, courseId})
+        if(!progressData){
+            return res.json({success: false, message: "No progress data found"})
+        }
+        res.json({success: true, progressData})
+    } catch (error) {
+        res.json({success: false, message: error.message})
+    }
+}
+
+//add user ratings to course
+export const addUserRating = async (req, res)=>{
+
+    const userId = req.auth.userId
+    const {courseId, rating} = req.body
+    
+    if(!userId || !courseId || !rating || rating < 1 || rating > 5){
+        return res.json({success: false, message: "Invalid rating data"})
+    }
+
+    try {
+        const courseData = await Course.findById(courseId)
+        if(!courseData){
+            return res.json({success: false, message: "Course not found"})
+        }
+        const user = await User.findById(userId)
+        if(!user || !user.enrolledCourses.includes(courseId)){
+            return res.json({success: false, message: "User not enrolled in this course"})
+        }
+        const existingRatingIndex = courseData.ratings.findIndex(r => r.userId === userId)
+        if(existingRatingIndex > -1){
+            courseData.ratings[existingRatingIndex].rating = rating
+        } else {
+            courseData.ratings.push({userId, rating})
+        }
+        await courseData.save()
+        return res.json({success: true, message: "Rating added successfully"})
+    } catch (error) {
+        return res.json({success: false, message: error.message})
     }
 }
