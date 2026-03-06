@@ -1,4 +1,7 @@
 import logo from './logo.svg'
+import mptc_logo from "./mptc_logo.svg";
+import telebirr_Logo from "./telebirr_Logo.png";
+import commercial_bank from "./commercial_bank.png";
 import logo_dark from './logo_dark.svg'
 import search_icon from './search_icon.svg'
 import cross_icon from './cross_icon.svg'
@@ -17,6 +20,9 @@ import star from './rating_star.svg'
 import star_blank from './star_dull_icon.svg'
 import profile_img_1 from './profile_img_1.png'
 import profile_img_2 from './profile_img_2.png'
+import yilhal from './yilhal.jpg'
+import abebaw from './abebaw.jpg'
+import abebe from './abebe.jpg'
 import profile_img_3 from './profile_img_3.png'
 import arrow_icon from './arrow_icon.svg'
 import down_arrow_icon from './down_arrow_icon.svg'
@@ -46,6 +52,9 @@ import lesson_icon from './lesson_icon.svg'
 
 export const assets = {
     logo,
+    mptc_logo,
+    telebirr_Logo,
+    commercial_bank,
     search_icon,
     sketch,
     microsoft_logo,
@@ -86,6 +95,9 @@ export const assets = {
     profile_img,
     profile_img2,
     profile_img3,
+    yilhal,
+    abebaw,
+    abebe,
     play_icon,
     blue_tick_icon,
     lesson_icon
@@ -103,25 +115,25 @@ export const dummyEducatorData = {
 
 export const dummyTestimonial = [
     {
-        name: 'Donald Jackman',
-        role: 'SWE 1 @ Amazon',
-        image: assets.profile_img_1,
+        name: 'Abebe Tessema',
+        role: 'Trainer @ GOFA',
+        image: assets.abebe,
         rating: 5,
-        feedback: 'I\'ve been using Imagify for nearly two years, primarily for Instagram, and it has been incredibly user-friendly, making my work much easier.',
+        feedback: 'I\'ve been Working at Gofa Industrial College has given me the opportunity to train and mentor students in practical technical skills. It is rewarding to see students develop confidence and become competent professionals in their fields.',
     },
     {
-        name: 'Richard Nelson',
-        role: 'SWE 2 @ Samsung',
-        image: assets.profile_img_2,
+        name: 'Abebaw Begna',
+        role: 'Trainer @ MPTC',
+        image: assets.abebaw,
         rating: 4,
-        feedback: 'I\'ve been using Imagify for nearly two years, primarily for Instagram, and it has been incredibly user-friendly, making my work much easier.',
+        feedback: 'I\'ve been At Misrak Poly Technic College, I am proud to contribute to providing quality technical education. The college focuses on hands-on training that prepares students to meet real industry demands.',
     },
     {
-        name: 'James Washington',
-        role: 'SWE 2 @ Google',
-        image: assets.profile_img_3,
+        name: 'Yilhal Asfaw',
+        role: 'Trainer @ TEGBARED',
+        image: assets.yilhal,
         rating: 4.5,
-        feedback: 'I\'ve been using Imagify for nearly two years, primarily for Instagram, and it has been incredibly user-friendly, making my work much easier.',
+        feedback: 'I\'ve been Teaching at Tegbared Poly Technic College allows me to share my knowledge and experience with future professionals. The practical learning environment helps students build strong technical and problem-solving skills.',
     },
 ];
 

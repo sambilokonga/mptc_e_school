@@ -7,8 +7,11 @@ const Footer = () => {
     <footer className='bg-gray-900 md:px-36 text-left w-full mt-10'>
       <div className='flex flex-col md:flex-row items-start px-8 md:px-0 justify-center gap-10 md:gap-32 py-10 border-b border-white/30'>
         <div className='flex flex-col items-center md:items-start w-full'>
-            <img src={assets.logo} alt="logo" />
-            <p className='mt-6 text-center md:text-left text-sm text-white/80'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab eum, quos sunt odit rerum minima magni cum quidem labore minus!</p>
+          <div className='flex items-center gap-2'>
+            <img src={assets.mptc_logo} alt="logo" className='w-8' />
+            <span className='font-bold text-2xl text-white'>MPTC</span>
+          </div>
+          <p className='mt-6 text-center md:text-left text-sm text-white/80'>Misrak Poly Technic College (MPTC) is committed to providing high-quality technical and vocational education that equips students with practical skills, innovation, and professional competence to succeed in today's dynamic workforce.</p>
         </div>
         <div className='flex flex-col items-center md:items-start w-full'>
             <h2 className='text-white font-semibold mb-5'>Company</h2>

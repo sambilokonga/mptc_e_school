@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { use, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AppContext } from '../../context/AppContext'
 import Loading from '../../components/trainee/Loading'
@@ -6,6 +6,8 @@ import { assets } from '../../assets/assets'
 import humanizeDuration from 'humanize-duration'
 import Footer from '../../components/trainee/Footer'
 import YouTube from "react-youtube"
+import { toast } from 'react-toastify'
+import axios from 'axios'
 
 const CourseDetails = () => {
 
@@ -15,16 +17,58 @@ const CourseDetails = () => {
     const [isAlreadyEnrolled, setIsAlreadyEnrolled] = useState(false)
     const [playerData, setPlayerData] = useState(null)
 
-    const {allCourses, calculateRating, calculateNoOfLectures, calculateCourseDuration, calculateChapterTime, currency} = useContext(AppContext)
+    const {allCourses, calculateRating, calculateNoOfLectures, 
+      calculateCourseDuration, calculateChapterTime, currency, 
+      backendUrl, userData, getToken} = useContext(AppContext)
 
     const fetchCourseData = async ()=>{
-        const findCourse = allCourses.find(course=> course._id === id)
-        setCourseData(findCourse)
+        // const findCourse = allCourses.find(course=> course._id === id)
+        // setCourseData(findCourse)
+        try {
+          const {data} = await axios.get(backendUrl + "/api/course/" + id)
+          if(data.success){
+            setCourseData(data.courseData)
+          }else{
+            toast.error(data.message)
+          }
+        } catch (error) {
+          toast.error(error.message)
+        }
     }
+
+    const enrollCourse = async()=>{
+      try {
+        if(!userData){
+          return toast.warning("Please login to enroll the course")
+        }
+        if(isAlreadyEnrolled){
+          return toast.warning("You have already enrolled this course")
+         }
+          const token = await getToken()
+          const {data} = await axios.post(backendUrl + "/api/user/purchase", {courseId: courseData._id},
+          {headers: {Authorization: `Bearer ${token}`}})
+        if(data.success){
+          toast.success(data.message)
+          window.location.replace(data.sessionUrl)
+        }else{
+          toast.error(data.message)
+        }
+
+      } catch (error) {
+        toast.error(error.message)
+      }
+    }
+    
 
     useEffect(()=>{
         fetchCourseData()
-    },[allCourses])
+    },[])
+
+    useEffect(()=>{
+        if(userData && courseData){
+          setIsAlreadyEnrolled(userData.enrollCourse?.includes(courseData._id))
+        }
+    },[userData, courseData])
 
     const toggleSection = (index)=>{
       setOpenSection((prev)=>(
@@ -51,7 +95,7 @@ const CourseDetails = () => {
               <p className='text-blue-500'>({calculateRating(courseData)} {courseData?.reviews?.length > 1 ? "ratings" : "rating"})</p>
               <p>{courseData?.enrolledStudnts?.length ?? 0}{" "} {courseData?.enrolledStudnts?.length > 1 ? "students" : "student"}</p>
             </div>
-            <p className='text-sm'>course by <span className='text-blue-500 underline'>MPTC</span></p>
+            <p className='text-sm'>course by <span className='text-blue-500 underline'>{courseData.educator.name}</span></p>
             <div className='pt-8 text-gray-800'>
               <h2 className='text-xl font-semibold'>Course Structure</h2>
               <div className='pt-5'>
@@ -129,7 +173,7 @@ const CourseDetails = () => {
               <p>{calculateNoOfLectures(courseData)} lessons</p>
             </div>
           </div>
-          <button className='md:mt-6 mt-4 w-full py-3 rounded bg-blue-600 text-white font-medium'>{isAlreadyEnrolled ? "Already Enrolled" : "Enrolled"}</button>
+          <button onClick={enrollCourse} className='md:mt-6 mt-4 w-full py-3 rounded bg-blue-600 text-white font-medium'>{isAlreadyEnrolled ? "Already Enrolled" : "Enrolled"}</button>
           <div className='pt-6'>
             <p className='md:text-xl text-lg font-medium text-gray-800'>What's in the course? </p>
             <ul className='ml-4 pt-2 text-sm md:text-default list-disc text-gray-500'>
