@@ -3,18 +3,18 @@ import { AppContext } from '../../context/AppContext'
 import Loading from '../../components/trainee/Loading'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { BookOpen, DollarSign, Users, Calendar } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 const MyCourses = () => {
 
-  const {currency, backendUrl, getToken, isEducator} = useContext(AppContext)
+  const { currency, backendUrl, getToken, isEducator } = useContext(AppContext)
   const [courses, setCourses] = useState(null)
 
-  const fetchEducatorCourses = async()=>{
-      // setCourses(allCourses)
+  const fetchEducatorCourses = async () => {
     try {
       const token = await getToken()
-      // Make API call to fetch educator's courses
-      const {data} = await axios.get(backendUrl + "/api/educator/courses", {
+      const { data } = await axios.get(backendUrl + "/api/educator/courses", {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -26,62 +26,97 @@ const MyCourses = () => {
     }
   }
 
-  useEffect(()=>{
-    if(isEducator){
+  useEffect(() => {
+    if (isEducator) {
       fetchEducatorCourses()
     }
-  },[isEducator])
+  }, [isEducator])
 
   return courses ? (
-    <div className='h-screen flex flex-col items-start justify-between p-4 md:p-8 pt-8 md:pb-0 pb-0'>
-      <div className='w-full'>
-        <h2 className='pb-4 text-lg font-medium'>My-courses</h2>
-        <div className='flex flex-col items-center max-w-4xl w-full overflow-hidden rounde-md bg-white border border-gray-500/20'>
-        <table className='md:table-auto table-fixed w-full overflow-hidden'>
-          <thead className='text-gray-900 border-b border-gray-500/20 text-sm text-left'>
-            <tr>
-              <th className='px-4 py-3 font-semibold truncate'>All Courses</th>
-              <th className='px-4 py-3 font-semibold truncate'>Earnings</th>
-              <th className='px-4 py-3 font-semibold truncate'>Students</th>
-              <th className='px-4 py-3 font-semibold truncate'>Published On</th>
-            </tr>
-          </thead>
-        <tbody className='text-gray-500 text-sm'>
-          {courses.map((course) => {
-            const studentCount = course.enrolledStudents?.length || 0
-            const finalPrice =
-              course.coursePrice -
-              (course.discount * course.coursePrice) / 100
+    <div className='min-h-[calc(100vh-73px)] p-6 md:p-10 bg-gray-50/50 w-full'>
+      <div className='w-full max-w-6xl mx-auto'>
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <h1 className='text-3xl font-extrabold text-gray-900'>My Courses</h1>
+          <p className="text-gray-500 mt-1">Manage your active courses and track their performance.</p>
+        </motion.div>
 
-            return (
-              <tr key={course._id} className='border-b border-gray-50/20'>
-                <td className='md:px-4 pl-2 md:pl-4 py-3 flex items-center space-x-3 truncate'>
-                  <img src={course.courseThumbnail} alt="Course" className='w-16' />
-                  <span className='truncate hidden md:block'>
-                    {course.courseTitle}
-                  </span>
-                </td>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2 }}
+          className='w-full bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden'
+        >
+          <div className='w-full overflow-x-auto'>
+            <table className='w-full min-w-[700px] text-left'>
+              <thead className='bg-gray-50/80 text-gray-500 text-xs uppercase tracking-wider'>
+                <tr>
+                  <th className='px-6 py-4 font-semibold rounded-tl-xl'>
+                    <div className="flex items-center gap-2"><BookOpen className="w-4 h-4" /> Course</div>
+                  </th>
+                  <th className='px-6 py-4 font-semibold'>
+                    <div className="flex items-center gap-2"><DollarSign className="w-4 h-4" /> Earnings</div>
+                  </th>
+                  <th className='px-6 py-4 font-semibold'>
+                    <div className="flex items-center gap-2"><Users className="w-4 h-4" /> Students</div>
+                  </th>
+                  <th className='px-6 py-4 font-semibold rounded-tr-xl'>
+                    <div className="flex items-center gap-2"><Calendar className="w-4 h-4" /> Published On</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className='divide-y divide-gray-100 text-sm'>
+                {courses.length > 0 ? courses.map((course) => {
+                  const studentCount = course.enrolledStudents?.length || 0
+                  const finalPrice = course.coursePrice - (course.discount * course.coursePrice) / 100
 
-                <td className='px-4 py-3'>
-                  {currency} {Math.floor(studentCount * finalPrice)}
-                </td>
+                  return (
+                    <tr key={course._id} className='hover:bg-gray-50/50 transition-colors group'>
+                      <td className='px-6 py-4'>
+                        <div className="flex items-center gap-4">
+                          <img src={course.courseThumbnail} alt={course.courseTitle} className='w-20 h-14 object-cover rounded-md border border-gray-100 shadow-sm group-hover:shadow transition-shadow' />
+                          <span className='font-semibold text-gray-800 line-clamp-2 max-w-xs'>
+                            {course.courseTitle}
+                          </span>
+                        </div>
+                      </td>
 
-                <td className='px-4 py-3'>
-                  {studentCount}
-                </td>
+                      <td className='px-6 py-4 font-medium text-emerald-600'>
+                        {currency}{Math.floor(studentCount * finalPrice)}
+                      </td>
 
-                <td className='px-4 py-3'>
-                  {new Date(course.createdAt).toLocaleDateString()}
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-        </table>
-        </div>
+                      <td className='px-6 py-4'>
+                        <span className="inline-flex items-center justify-center bg-blue-50 text-blue-700 font-semibold px-3 py-1 rounded-full text-xs">
+                          {studentCount}
+                        </span>
+                      </td>
+
+                      <td className='px-6 py-4 text-gray-500 font-medium'>
+                        {new Date(course.createdAt).toLocaleDateString(undefined, {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </td>
+                    </tr>
+                  )
+                }) : (
+                  <tr>
+                    <td colSpan="4" className="px-6 py-12 text-center text-gray-500">
+                      You haven't published any courses yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
       </div>
     </div>
-  ) : <Loading />
+  ) : <div className="min-h-screen flex w-full items-center justify-center bg-gray-50"><Loading /></div>
 }
 
 export default MyCourses

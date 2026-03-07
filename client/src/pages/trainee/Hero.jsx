@@ -20,7 +20,7 @@ const Hero = () => {
 
   return (
     <div
-      className='relative flex items-center flex-col justify-center w-full min-h-[500px] md:pt-40 pt-28 px-7 md:px-0 text-center overflow-hidden bg-cover bg-center bg-no-repeat'
+      className='relative flex items-center flex-col justify-center w-full min-h-[550px] md:pt-40 pt-28 px-7 md:px-0 text-center overflow-hidden bg-cover bg-center bg-no-repeat'
       style={{ backgroundImage: `url(${assets.welder_hero_bg})` }}
     >
       {/* Black/Blur Overlay */}
@@ -57,6 +57,11 @@ const Hero = () => {
 
         <motion.div variants={itemVariants} className="w-full max-w-2xl mx-auto pt-4 mb-4">
           <SearchBar />
+        </motion.div>
+        <motion.div>
+          <div className='w-full max-w-2xl mx-auto pt-4'>
+          <SearchBar />
+          </div>
         </motion.div>
       </motion.div>
     </div>

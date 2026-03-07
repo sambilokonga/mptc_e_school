@@ -1,23 +1,40 @@
 import React from 'react'
-import { assets } from '../../assets/assets'
 import { useNavigate } from 'react-router-dom'
+import { Search } from 'lucide-react'
 
-const SearchBar = ({data}) => {
+const SearchBar = ({ data }) => {
 
   const navigate = useNavigate()
-    const [input, setInput] = React.useState(data ? data : "")
-  
-    const onSearchHandler = (e)=>{
-      e.preventDefault()
+  const [input, setInput] = React.useState(data ? data : "")
+
+  const onSearchHandler = (e) => {
+    e.preventDefault()
+    if (input.trim()) {
       navigate("/course-list/" + input)
     }
-  
+  }
 
   return (
-    <form onSubmit={onSearchHandler}  className='max-w-xl w-full md:h-14 h-12 flex items-center bg-white border border-gray-500/20 rounded'>
-      <img src={assets.search_icon} alt="" className='md:w-auto w-10 px-3' />
-      <input onChange={e=>setInput(e.target.value)} value={input} type="text" placeholder='Search for courses' className='w-full h-full outline-none text-gray-500/80' />
-      <button type='submit' className='bg-blue-600 rounded text-white md:px-10 px-7 md:py-3 py-2 mx-1'>Search</button>
+    <form
+      onSubmit={onSearchHandler}
+      className='max-w-2xl w-full flex items-center bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-full border border-gray-100 p-2 overflow-hidden'
+    >
+      <div className="pl-4 pr-2 text-gray-400">
+        <Search className="w-5 h-5" />
+      </div>
+      <input
+        onChange={e => setInput(e.target.value)}
+        value={input}
+        type="text"
+        placeholder='What do you want to learn today?'
+        className='flex-1 h-12 outline-none text-gray-700 bg-transparent text-lg placeholder-gray-400'
+      />
+      <button
+        type='submit'
+        className='bg-blue-600 hover:bg-blue-700 active:scale-95 transition-all duration-200 text-white font-medium rounded-full px-8 py-3'
+      >
+        Search
+      </button>
     </form>
   )
 }

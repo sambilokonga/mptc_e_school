@@ -48,9 +48,11 @@ import profile_img from './profile_img.png'
 import profile_img2 from './profile_img2.png'
 import profile_img3 from './profile_img3.png'
 import lesson_icon from './lesson_icon.svg'
+import welder_hero_bg from './welder-hero-bg.webp'
 
 
 export const assets = {
+    welder_hero_bg,
     logo,
     mptc_logo,
     telebirr_Logo,
