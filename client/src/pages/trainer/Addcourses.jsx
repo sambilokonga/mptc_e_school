@@ -205,9 +205,9 @@ const Addcourses = () => {
 
             <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
               <div className='flex flex-col gap-2'>
-                <label className='text-sm font-semibold text-gray-700'>Course Price (USD) <span className="text-red-500">*</span></label>
+                <label className='text-sm font-semibold text-gray-700'>Course Price (ETB) <span className="text-red-500">*</span></label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">ETB</span>
                   <input
                     onChange={e => setCoursePrice(e.target.value)}
                     value={coursePrice}
@@ -215,7 +215,7 @@ const Addcourses = () => {
                     type="number"
                     placeholder='0.00'
                     min={0}
-                    className='outline-none py-3 pl-8 pr-4 w-full rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all bg-gray-50/50 focus:bg-white'
+                    className='outline-none py-3 pl-4 pr-4 w-full rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all bg-gray-50/50 focus:bg-white'
                   />
                 </div>
               </div>
