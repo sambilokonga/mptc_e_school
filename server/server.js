@@ -27,9 +27,7 @@ app.post("/clerk", express.json(), clerkWebHooks)
 app.use("/api/educator", express.json(), educatorRouter)
 app.use("/api/course", express.json(), courseRouter)
 app.use("/api/user", express.json(), userRouter)
-
-app.post("/stripe-webhook", express.raw({ type: "application/json" }), stripeWebhooks);
-app.post("/clerk-webhook",express.json(), clerkWebHooks);
+app.post("/stripe", express.raw({type: "application/json"}), stripeWebhooks) //stripe webhooks
 
 //Port
 const PORT = process.env.PORT || 5000
