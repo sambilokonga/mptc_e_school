@@ -53,54 +53,72 @@ export const clerkWebHooks = async(req, res)=>{
     }
 }
 
-//stripe web hooks
-const stripeInstance = Stripe(process.env.STRIPE_SECRET_KEY)
-export const stripeWebhooks = async (request, response)=>{
-    const sig = request.headers['stripe-signature'];
-    let event;
-    try {
-        event = Stripe.webhooks.constructEvent(request.body, sig, process.env.STRIP_WEBHOOK_SECRET);
-        // Handle the event
-        switch (event.type) {
-            case 'payment_intent.succeeded':{
-                const paymentIntent = event.data.object;
-                const paymentIntentId = paymentIntent.id
+const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-            const session = await stripeInstance.checkout.sessions.list({payment_intent: paymentIntentId})
-                const {purchaseId} = session.data[0].metadata
-                
-                const purchaseData = await Purchase.findById(purchaseId)
-                const userData = await User.findById(purchaseData.userId)
-                const courseData = await Course.findById(purchaseData.courseId.toString())
+export const stripeWebhooks = async (request, response) => {
+  const sig = request.headers["stripe-signature"];
+  let event;
 
-                courseData.enrolledStudents.push(userData)
-                await courseData.save()
+  try {
+    event = stripeInstance.webhooks.constructEvent(
+      request.body, // ✅ raw body
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET // ✅ fixed name
+    );
 
-                userData.enrolledCourses.push(courseData._id)
-                await userData.save()
+    switch (event.type) {
+      case "payment_intent.succeeded": {
+        const paymentIntent = event.data.object;
+        const paymentIntentId = paymentIntent.id;
 
-                purchaseData.status = "completed"
-                await purchaseData.save()
+        const session = await stripeInstance.checkout.sessions.list({
+          payment_intent: paymentIntentId,
+        });
 
-                break;
-            }
+        const { purchaseId } = session.data[0].metadata;
 
-            case 'payment_intent.payment_failed':{
-                const paymentIntent = event.data.object;
-                const paymentIntentId = paymentIntent.id
+        const purchaseData = await Purchase.findById(purchaseId);
+        const userData = await User.findById(purchaseData.userId);
+        const courseData = await Course.findById(
+          purchaseData.courseId.toString()
+        );
 
-                const session = await stripeInstance.checkout.sessions.list({payment_intent: paymentIntentId})
-                const {purchaseId} = session.data[0].metadata
-                const purchaseData = await Purchase.findById(purchaseId)
-                purchaseData.status = "failed"
-                await purchaseData.save()
-                break;
-            }
-            default:
-                console.log(`Unhandled event type ${event.type}`);
-        }
-        response.json({received: true});
-    }catch (err) {
-        return response.status(400).send(`Webhook Error: ${err.message}`)
+        courseData.enrolledStudents.push(userData);
+        await courseData.save();
+
+        userData.enrolledCourses.push(courseData._id);
+        await userData.save();
+
+        purchaseData.status = "completed";
+        await purchaseData.save();
+
+        break;
+      }
+
+      case "payment_intent.payment_failed": {
+        const paymentIntent = event.data.object;
+        const paymentIntentId = paymentIntent.id;
+
+        const session = await stripeInstance.checkout.sessions.list({
+          payment_intent: paymentIntentId,
+        });
+
+        const { purchaseId } = session.data[0].metadata;
+
+        const purchaseData = await Purchase.findById(purchaseId);
+        purchaseData.status = "failed";
+        await purchaseData.save();
+
+        break;
+      }
+
+      default:
+        console.log(`Unhandled event type ${event.type}`);
     }
-}
+
+    response.json({ received: true });
+  } catch (err) {
+    console.log("❌ Stripe Error:", err.message);
+    return response.status(400).send(`Webhook Error: ${err.message}`);
+  }
+};
